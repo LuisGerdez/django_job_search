@@ -1,0 +1,54 @@
+{% extends "job_search/layout.html" %}
+
+{% block body %}
+    {% if user.user_type == 1  %}
+        <div class="container" style="margin-top: 30px;">
+            <center><h2>Post a job</h2></center>
+        </div>
+
+        <form action="{% url 'job_post' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" type="text" name="job_title" placeholder="Job title" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="job_description" placeholder="Job description" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label>Country</label>
+                    <select name="country" class="countries form-control" id="countryId" required>
+                        <option value="" selected>Select Country</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>State</label>
+                    <select name="state" id="stateId" class="form-control states" required>
+                        <option value="" selected>Select State</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>City</label>
+                    <select name="city" id="cityId" class="form-control cities" required>
+                        <option value="" selected>Select City</option>
+                    </select>
+                </div>
+                <script src="//geodata.solutions/includes/countrystatecity.js"></script>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="job_requirements" placeholder="Job requirements" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="job_salary" placeholder="Salary" required>
+            </div>
+
+            <input class="btn btn-dark" type="submit" value="Post job">
+        </form>
+
+    {% elif user.user_type == 2  %}
+        <div class="container" style="margin-top: 30px;">
+            <center><h2>Only employer users can post jobs!</h2></center>
+        </div>
+    {% endif  %}
+
+{% endblock %}

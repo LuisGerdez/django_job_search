@@ -1,0 +1,21 @@
+{% extends "job_search/layout.html" %}
+
+{% block body %}
+	{% if user.is_authenticated %}
+		{% if user.user_type == 1 %}
+    		<center><h1 style="margin-top: 30px;">Post jobs to hire employees!</h1></center>
+    	{% elif user.user_type == 2 %}
+    		<center><h1 style="margin-top: 30px;">Looking for a job?</h1></center>
+    	{% endif %}
+    {% else %}
+    	<center>
+    		<h3 style="margin-top: 30px;">Register as an employer and post jobs!</h3>
+    		<h3 style="margin-top: 30px;">Register as an employee and apply for jobs!</h3>
+    	</center>
+    {% endif %}
+
+    <center><h2 style="margin-top: 30px;">Jobs:</h2></center>
+    <center>
+    	<div id="all-jobs-view"></div>
+    </center>
+{% endblock %}

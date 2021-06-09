@@ -1,0 +1,110 @@
+{% extends "job_search/layout.html" %}
+
+{% block body %}
+	{% if exists == True  %}
+		{% if applying == True %}
+			<div class="alert alert-secondary" role="alert"><center>You have applied for this job! Now they can get your information, so they will contact you if you're accepted!</center></div>
+		{% endif %}
+
+		<center>
+			<div class="container p-2 my-2 bg-dark text-white">
+				<h1>{{ job.title }}</h1>
+
+				<h6>Posted by <a href="{% url 'profile' job.user %}">{{ employer.company_name }}</a></h6>
+				<h6>Located at {{ job.country }}, {{ job.state }}, {{ job.city }}</h6>
+
+				{% if user.is_authenticated %}
+					{% if user.user_type == 1 %}
+						{% if user.username == job.user.username %}
+							<form action="{% url 'job_view' job.id %}" method="post">
+            					{% csrf_token %}
+            					<input name="job_id" type="hidden" value="{{ job.id }}">
+            					<input name="delete-job" class="btn btn-danger" type="submit" value="Delete job" onclick="alert('You have deleted this job post!');">
+        					</form>
+						{% endif %}
+					{% elif user.user_type == 2 %}
+							<form method="get">
+								{% if applying == False %}
+            						<input id="apply-job" type="submit" name="apply-job" value="Apply" class="btn btn-primary">
+            					{% elif applying == True %}
+            						<input id="apply-job" type="button" name="apply-job" value="Applied" class="btn btn-primary" disabled>
+            					{% endif %}
+        					</form>
+					{% endif %}
+				{% endif %}
+			</div>
+
+			<div class="container p-2 my-2 border border-dark">
+				<h4>Job details</h4>
+
+				<h5>Description</h5>
+				<div>
+					<p style="text-align: center; color: gray; font-size: 18px;">{{ job.description }}</p>
+				</div>
+
+				<h5>Requirements</h5>
+				<div>
+					<p style="text-align: center; color: gray; font-size: 18px; white-space: pre-wrap;">{{ job.requirements }}</p>
+				</div>
+
+				<h5>Salary</h5>
+				<div>
+					<p style="text-align: center; color: gray; font-size: 18px;">{{ job.salary }}</p>
+				</div>
+			</div>
+
+			{% if user.is_authenticated %}
+				{% if user.user_type == 1 %}
+					{% if user.username == job.user.username %}
+						<div class="container p-2 my-2 border border-dark">
+							<h4>Applicants</h4>
+							{% for a in applicants %}
+								<h5 style="margin: 0px;">{{ a.username }}</h5>
+								
+								<button class="btn btn-link btn-sm" data-toggle="modal" data-target="#Modal_{{ a.username }}">View information</button>
+
+								<div class="modal fade" id="Modal_{{ a.username }}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel_{{ a.username }}" aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+        										<h5 class="modal-title" id="ModalLabel_{{ a.username }}">Contact information</h5>
+        										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          											<span aria-hidden="true">&times;</span>
+        										</button>
+											</div>
+      										<div class="modal-body">
+      											<h4>Personal information</h4>
+        										<p><b>First name:</b> {{ a.first_name }}</p>
+        										<p><b>Last name:</b> {{ a.last_name }}</p>
+        										<p><b>Gender:</b> {{ a.gender }}</p>
+        										<p><b>Birthday:</b> {{ a.birthday }}</p>
+        										<p><b>Country/State/City:</b> {{ a.country }}/{{ a.state }}/{{ a.city }}</p>
+
+        										<h4>Contact information</h4>
+        										<p><b>Email:</b> {{ a.email }}</p>
+        										<p><b>Phone:</b> {{ a.phone }}</p>
+
+        										<h5><a href="{% url 'profile' a.username %}">View employee's profile</a></h5>
+      										</div>
+      										<div class="modal-footer">
+        										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      										</div>
+										</div>
+									</div>
+								</div>
+							{% empty %}
+								<h6>There are no applicants yet</h6>
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% endif %}
+			{% endif %}
+		</center>
+	{% else %}
+		<center>
+			<div class="container p-4 my-3 border">
+				<h1>This job doesn't exist!</h1>
+			</div>
+		</center>
+	{% endif %}
+{% endblock %}
